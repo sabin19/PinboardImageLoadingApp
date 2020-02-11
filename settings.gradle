@@ -1,0 +1,6 @@
+rootProject.name='MindvalleyAndroidTest'
+include ':app'
+include ':shared'
+include ':netwoking'
+include ':model'
+include ':test-shared'

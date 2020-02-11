@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+
+    <dimen name="image_thumbnail_size">248dp</dimen>
+    <dimen name="image_thumbnail_spacing">2dp</dimen>
+    <dimen name="user_image_height">220dp</dimen>
+    <dimen name="user_image_width">220dp</dimen>
+    <dimen name="image_size">420dp</dimen>
+    <dimen name="profile_image">50dp</dimen>
+    <dimen name="profile_image_radius">25dp</dimen>
+    <dimen name="large_image_size_height">340dp</dimen>
+    <dimen name="large_image_size_width">300dp</dimen>
+
+</resources>

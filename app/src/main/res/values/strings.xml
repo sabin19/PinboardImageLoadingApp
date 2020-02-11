@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AndroidTest</string>
+    <string name="text_home_title">Users</string>
+    <string name="text_details_title">View Image</string>
+</resources>

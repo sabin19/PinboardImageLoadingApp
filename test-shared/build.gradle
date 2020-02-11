@@ -1,0 +1,13 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+dependencies {
+
+
+
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
+    implementation "junit:junit:$rootProject.junit"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$rootProject.coroutine"
+
+}
