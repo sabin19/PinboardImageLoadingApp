@@ -1,5 +1,5 @@
 # Pinboard
-Mindvally android test application it is based on the image downloading and caching library also it handle the json response.
+This is test application to show how to build android application with android jetpack library 
 Also added support for Android 10 Dark mode
 
 Used Tools and Technologies
