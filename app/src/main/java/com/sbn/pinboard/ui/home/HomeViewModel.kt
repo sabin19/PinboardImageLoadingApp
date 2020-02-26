@@ -15,13 +15,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class HomeViewModel @Inject constructor(val dataFactory: PagingDataFactory) : ViewModel(),
+class HomeViewModel @Inject constructor(dataFactory: PagingDataFactory) : ViewModel(),
     OnUserItemClickedListener {
     private val _onUser = MutableLiveData<Event<User>>()
     val onUser: LiveData<Event<User>> get() = _onUser
 
 
-    private val pagedSize = 4
+    private val pagedSize = 10
 
     val list: LiveData<PagedList<User>>
     init {

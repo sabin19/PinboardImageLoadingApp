@@ -40,7 +40,7 @@ class DetailsFragment : DaggerFragment() {
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
         val cacheParams = ImageCache.ImageCacheParams()
         cacheParams.setMemCacheSizePercent(0.25f) // Set memory cache to 25% of app memory
-        imageFetcher?.addImageCache(activity!!.supportFragmentManager, cacheParams)
+        imageFetcher?.addImageCache(requireActivity().supportFragmentManager, cacheParams)
         imageFetcher?.setLoadingImage(R.drawable.empty_photo)
         return binding.root
     }

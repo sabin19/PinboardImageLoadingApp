@@ -24,4 +24,6 @@ class DetailsFragmentTest {
         onView(withId(R.id.imageView))
             .check(matches(isDisplayed()))
     }
+
+
 }

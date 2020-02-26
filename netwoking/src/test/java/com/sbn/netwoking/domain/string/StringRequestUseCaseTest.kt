@@ -7,7 +7,7 @@ import com.sbn.netwoking.data.TestData
 import com.sbn.netwoking.domain.response.Response
 import com.sbn.netwoking.util.Method
 import com.sbn.netwoking.util.StringRequestParam
-import com.sbn.test.util.SyncExecutorRule
+import com.sbn.netwoking.util.SyncExecutorRule
 import org.hamcrest.core.Is
 import org.hamcrest.core.IsInstanceOf
 import org.junit.Assert

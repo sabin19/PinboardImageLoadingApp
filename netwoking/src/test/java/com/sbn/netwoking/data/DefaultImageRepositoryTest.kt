@@ -20,7 +20,7 @@ class DefaultImageRepositoryTest {
 
 
     private lateinit var repository: ImageRepository
-    lateinit var bitmapRemoteSource: BitmapRemoteSource
+    private lateinit var bitmapRemoteSource: BitmapRemoteSource
 
     @get:Rule
     var syncExecutorRule = SyncExecutorRule()
