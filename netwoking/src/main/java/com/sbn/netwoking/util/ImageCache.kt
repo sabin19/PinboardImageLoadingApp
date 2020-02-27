@@ -1,25 +1,8 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.sbn.netwoking.util
 
-import android.annotation.TargetApi
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import androidx.collection.LruCache
 import androidx.core.graphics.BitmapCompat
@@ -41,7 +24,6 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
      */
     private fun init(cacheParams: ImageCacheParams) {
         mCacheParams = cacheParams
-        //BEGIN_INCLUDE(init_memory_cache)
 // Set up memory cache
         if (mCacheParams!!.memoryCacheEnabled) {
             mReusableBitmaps =
@@ -84,19 +66,12 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
                 }
             }
         }
-        //END_INCLUDE(init_memory_cache)
     }
 
-    /**
-     * Adds a bitmap to both memory and disk cache.
-     *
-     * @param data  Unique identifier for the bitmap to store
-     * @param value The bitmap drawable to store
-     */
     fun addBitmapToCache(
         data: String?,
         value: BitmapDrawable?
-    ) { //BEGIN_INCLUDE(add_bitmap_to_cache)
+    ) {
         if (data == null || value == null) {
             return
         }
@@ -108,7 +83,7 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
             }
             mMemoryCache!!.put(data, value)
         }
-        //END_INCLUDE(add_bitmap_to_cache)
+
     }
 
     /**
@@ -117,20 +92,16 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
      * @param data Unique identifier for which item to get
      * @return The bitmap drawable if found in cache, null otherwise
      */
-    fun getBitmapFromMemCache(data: String): BitmapDrawable? { //BEGIN_INCLUDE(get_bitmap_from_mem_cache)
+    fun getBitmapFromMemCache(data: String): BitmapDrawable? {
         var memValue: BitmapDrawable? = null
         if (mMemoryCache != null) {
             memValue = mMemoryCache!![data]
         }
         return memValue
-        //END_INCLUDE(get_bitmap_from_mem_cache)
+
     }
 
-    /**
-     * @param options - BitmapFactory.Options with out* options populated
-     * @return Bitmap that case be used for inBitmap
-     */
-    fun getBitmapFromReusableSet(options: BitmapFactory.Options): Bitmap? { //BEGIN_INCLUDE(get_bitmap_from_reusable_set)
+    fun getBitmapFromReusableSet(options: BitmapFactory.Options): Bitmap? {
         var bitmap: Bitmap? = null
         if (mReusableBitmaps != null && !mReusableBitmaps!!.isEmpty()) {
             synchronized(mReusableBitmaps!!) {
@@ -157,13 +128,8 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
             }
         }
         return bitmap
-        //END_INCLUDE(get_bitmap_from_reusable_set)
     }
 
-    /**
-     * Clears both the memory and disk cache associated with this ImageCache object. Note that
-     * this includes disk access so this should not be executed on the main/UI thread.
-     */
     fun clearCache() {
         if (mMemoryCache != null) {
             mMemoryCache!!.evictAll()
@@ -188,25 +154,7 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
         }
     }
 
-    /**
-     * A simple non-UI Fragment that stores a single Object and is retained over configuration
-     * changes. It will be used to retain the ImageCache object.
-     */
-    class RetainFragment
-    /**
-     * Empty constructor as per the Fragment documentation
-     */
-        : Fragment() {
-        /**
-         * Get the stored object.
-         *
-         * @return The stored object
-         */
-        /**
-         * Store a single object in this Fragment.
-         *
-         * @param object The object to store
-         */
+    class RetainFragment : Fragment() {
         var `object`: Any? = null
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -232,10 +180,9 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
                 findOrCreateRetainFragment(
                     fragmentManager
                 )
-            // See if we already have an ImageCache stored in RetainFragment
             var imageCache =
                 mRetainFragment.`object` as ImageCache?
-            // No existing ImageCache, create one and store it in RetainFragment
+
             if (imageCache == null) {
                 imageCache = ImageCache(cacheParams)
                 mRetainFragment.`object` = imageCache
@@ -243,18 +190,9 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
             return imageCache
         }
 
-        /**
-         * @param candidate     - Bitmap to check
-         * @param targetOptions - Options that have the out* value populated
-         * @return true if `candidate` can be used for inBitmap re-use with
-         * `targetOptions`
-         */
-        @TargetApi(VERSION_CODES.KITKAT)
         private fun canUseForInBitmap(
             candidate: Bitmap, targetOptions: BitmapFactory.Options
-        ): Boolean { //BEGIN_INCLUDE(can_use_for_inbitmap)
-// From Android 4.4 (KitKat) onward we can re-use if the byte size of the new bitmap
-// is smaller than the reusable bitmap candidate allocation byte count.
+        ): Boolean {
             val width = targetOptions.outWidth / targetOptions.inSampleSize
             val height = targetOptions.outHeight / targetOptions.inSampleSize
             val byteCount =
@@ -262,7 +200,7 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
                     candidate.config
                 )
             return byteCount <= candidate.allocationByteCount
-            //END_INCLUDE(can_use_for_inbitmap)
+
         }
 
         /**
