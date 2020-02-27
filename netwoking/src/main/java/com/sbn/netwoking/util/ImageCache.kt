@@ -43,15 +43,7 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
         mCacheParams = cacheParams
         //BEGIN_INCLUDE(init_memory_cache)
 // Set up memory cache
-        if (mCacheParams!!.memoryCacheEnabled) { // If we're running on Honeycomb or newer, create a set of reusable bitmaps that can be
-// populated into the inBitmap field of BitmapFactory.Options. Note that the set is
-// of SoftReferences which will actually not be very effective due to the garbage
-// collector being aggressive clearing Soft/WeakReferences. A better approach
-// would be to use a strongly references bitmaps, however this would require some
-// balancing of memory usage between this set and the bitmap LruCache. It would also
-// require knowledge of the expected size of the bitmaps. From Honeycomb to JellyBean
-// the size would need to be precise, from KitKat onward the size would just need to
-// be the upper bound (due to changes in how inBitmap can re-use bitmaps).
+        if (mCacheParams!!.memoryCacheEnabled) {
             mReusableBitmaps =
                 Collections.synchronizedSet(HashSet())
             mMemoryCache = object :
@@ -186,20 +178,6 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
         var memoryCacheEnabled =
             DEFAULT_MEM_CACHE_ENABLED
 
-        /**
-         * Sets the memory cache size based on a percentage of the max available VM memory.
-         * Eg. setting percent to 0.2 would set the memory cache to one fifth of the available
-         * memory. Throws [IllegalArgumentException] if percent is < 0.01 or > .8.
-         * memCacheSize is stored in kilobytes instead of bytes as this will eventually be passed
-         * to construct a LruCache which takes an int in its constructor.
-         *
-         *
-         * This value should be chosen carefully based on a number of factors
-         * Refer to the corresponding Android Training class for more discussion:
-         * http://developer.android.com/training/displaying-bitmaps/
-         *
-         * @param percent Percent of available app memory to use to size memory cache
-         */
         fun setMemCacheSizePercent(percent: Float) {
             require(!(percent < 0.01f || percent > 0.8f)) {
                 ("setMemCacheSizePercent - percent must be "
@@ -246,14 +224,7 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
         // Constants to easily toggle various caches
         private const val DEFAULT_MEM_CACHE_ENABLED = true
 
-        /**
-         * Return an [ImageCache] instance. A [RetainFragment] is used to retain the
-         * ImageCache object across configuration changes such as a change in device orientation.
-         *
-         * @param fragmentManager The fragment manager to use when dealing with the retained fragment.
-         * @param cacheParams     The cache parameters to use if the ImageCache needs instantiation.
-         * @return An existing retained ImageCache object or a new one if one did not exist
-         */
+
         fun getInstance(
             fragmentManager: FragmentManager, cacheParams: ImageCacheParams
         ): ImageCache { // Search for, or create an instance of the non-UI RetainFragment
@@ -313,23 +284,7 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
             return 1
         }
 
-        private fun bytesToHexString(bytes: ByteArray): String { // http://stackoverflow.com/questions/332079
-            val sb = StringBuilder()
-            for (b in bytes) {
-                val hex = Integer.toHexString(0xFF and b.toInt())
-                if (hex.length == 1) {
-                    sb.append('0')
-                }
-                sb.append(hex)
-            }
-            return sb.toString()
-        }
 
-        /**
-         * Get the size in bytes of a bitmap in a BitmapDrawable. Note that from Android 4.4 (KitKat)
-         * onward this returns the allocated memory size of the bitmap which can be larger than the
-         * actual bitmap data byte count (in the case it was re-used).
-         */
         private fun getBitmapSize(value: BitmapDrawable): Int {
             return BitmapCompat.getAllocationByteCount(value.bitmap)
         }
@@ -358,14 +313,6 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
         }
     }
 
-    /**
-     * Create a new ImageCache object using the specified parameters. This should not be
-     * called directly by other classes, instead use
-     * [ImageCache.getInstance] to
-     * fetch an ImageCache instance.
-     *
-     * @param cacheParams The cache parameters to use to initialize the cache
-     */
     init {
         init(cacheParams)
     }

@@ -102,13 +102,6 @@ public abstract class AsyncTask<Params, Progress, Result> {
     }
 
     /**
-     * @hide
-     */
-    public static void setDefaultExecutor(Executor exec) {
-        sDefaultExecutor = exec;
-    }
-
-    /**
      * Convenience version of {@link #execute(Object...)} for use with
      * a simple Runnable object. See {@link #execute(Object[])} for more
      * information on the order of execution.

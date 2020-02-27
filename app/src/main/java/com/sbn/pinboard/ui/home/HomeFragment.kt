@@ -44,7 +44,7 @@ class HomeFragment : DaggerFragment() {
         val cacheParams = ImageCache.ImageCacheParams()
         cacheParams.setMemCacheSizePercent(0.25f) // Set memory cache to 25% of app memory
 
-        imageFetcher?.addImageCache(activity!!.supportFragmentManager, cacheParams)
+        imageFetcher?.addImageCache(requireActivity().supportFragmentManager, cacheParams)
         imageFetcher?.setLoadingImage(R.drawable.empty_photo)
         return binding.root
     }
@@ -60,17 +60,10 @@ class HomeFragment : DaggerFragment() {
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = GridLayoutManager(this.context, 1)
         binding.recyclerView.addItemDecoration(CommonItemSpaceDecoration(16))
-        val adapter = imageFetcher?.let { HomeAdapter(it, viewModel) }
-        binding.recyclerView.adapter = adapter
-        viewModel.list.observe(viewLifecycleOwner, Observer { items ->
-            adapter?.submitList(items)
-        })
-
-
         val connectivity = context?.let { InternetConnectivity(it) }
         connectivity?.skip(1)?.distinctUntilChanged()?.observe(viewLifecycleOwner, Observer {
             if (!it) {
-                Toast.makeText(context!!, "No internet connection", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_LONG).show()
             }
         })
 

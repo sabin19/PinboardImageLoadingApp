@@ -34,32 +34,11 @@ abstract class ImageWorker protected constructor(context: Context) {
     protected var mPauseWork = false
     //private val mPauseWorkLock = Any()
     private val lock = ReentrantLock()
-    private val mPauseWorkLock = lock.newCondition()
+    //val obj = Object()
+    private val mPauseWorkLock = Object()
     @JvmField
     protected var mResources: Resources = context.resources
-    /**
-     * Load an image specified by the data parameter into an ImageView (override
-     * [ImageWorker.processBitmap] to define the processing logic). A memory and
-     * disk cache will be used if an [ImageCache] has been added using
-     * [ImageWorker.addImageCache]. If the
-     * image is found in the memory cache, it is set immediately, otherwise an
-     * will be created to asynchronously load the bitmap.
-     *
-     * @param data The URL of the image to download.
-     * @param imageView The ImageView to bind the downloaded image to.
-     * @param listener A listener that will be called back once the image has been loaded.
-     */
-    /**
-     * Load an image specified by the data parameter into an ImageView (override
-     * [ImageWorker.processBitmap] to define the processing logic). A memory and
-     * disk cache will be used if an [ImageCache] has been added using
-     * [ImageWorker.addImageCache]. If the
-     * image is found in the memory cache, it is set immediately, otherwise an [AsyncTask]
-     * will be created to asynchronously load the bitmap.
-     *
-     * @param data The URL of the image to download.
-     * @param imageView The ImageView to bind the downloaded image to.
-     */
+
     @JvmOverloads
     fun loadImage(
         data: Any?,
@@ -86,9 +65,7 @@ abstract class ImageWorker protected constructor(context: Context) {
             val asyncDrawable = AsyncDrawable(mResources, mLoadingBitmap, task)
             imageView.setImageResource(0)
             imageView.setImageDrawable(asyncDrawable)
-            // NOTE: This uses a custom version of AsyncTask that has been pulled from the
-// framework and slightly modified. Refer to the docs at the top of the class
-// for more info on what was changed.
+
             task.executeOnExecutor(AsyncTask.DUAL_THREAD_EXECUTOR)
             //END_INCLUDE(execute_background_task)
         }
@@ -143,7 +120,6 @@ abstract class ImageWorker protected constructor(context: Context) {
      * Adds an [ImageCache] to this [ImageWorker] to handle disk and memory bitmap
      * caching.
      * @param activity
-     * @param diskCacheDirectoryName See
      */
     private fun addImageCache(
         activity: FragmentActivity
@@ -168,15 +144,6 @@ abstract class ImageWorker protected constructor(context: Context) {
         setPauseWork(false)
     }
 
-    /**
-     * Subclasses should override this to define any processing or work that must happen to produce
-     * the final bitmap. This will be executed in a background thread and be long running. For
-     * example, you could resize a large bitmap here, or pull down an image from the network.
-     *
-     * @param data The data to identify which image to process, as provided by
-     * [ImageWorker.loadImage]
-     * @return The processed bitmap
-     */
     protected abstract fun processBitmap(data: Any?): Bitmap?
 
     /**
@@ -215,22 +182,16 @@ abstract class ImageWorker protected constructor(context: Context) {
             synchronized(mPauseWorkLock) {
                 while (mPauseWork && !isCancelled) {
                     try {
-                        mPauseWorkLock.await()
+                        mPauseWorkLock.wait()
                     } catch (e: InterruptedException) {
                     }
                 }
             }
-            // If the bitmap was not found in the cache and this task has not been cancelled by
-// another thread and the ImageView that was originally bound to this task is still
-// bound back to this task and our "exit early" flag is not set, then call the main
-// process method (as implemented by a subclass)
+
             if (!isCancelled && attachedImageView != null && !mExitTasksEarly) {
                 bitmap = processBitmap(mData)
             }
-            // If the bitmap was processed and the image cache is available, then add the processed
-// bitmap to the cache for future use. Note we don't check if the task was cancelled
-// here, if it was, and the thread is still running, we may as well add the processed
-// bitmap to our cache as it might be used again in the future
+
             if (bitmap != null) {
                 drawable = BitmapDrawable(mResources, bitmap)
                 if (imageCache != null) {
@@ -265,7 +226,7 @@ abstract class ImageWorker protected constructor(context: Context) {
 
         override fun onCancelled(value: BitmapDrawable?) {
             super.onCancelled(value)
-            synchronized(mPauseWorkLock) { mPauseWorkLock.signalAll() }
+            synchronized(mPauseWorkLock) { mPauseWorkLock.notifyAll() }
         }
 
         /**
@@ -358,7 +319,7 @@ abstract class ImageWorker protected constructor(context: Context) {
         synchronized(mPauseWorkLock) {
             mPauseWork = pauseWork
             if (!mPauseWork) {
-                mPauseWorkLock.signal()
+                mPauseWorkLock.notify()
             }
         }
     }

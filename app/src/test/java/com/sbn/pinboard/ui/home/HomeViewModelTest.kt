@@ -17,6 +17,7 @@ import com.sbn.pinboard.shared.domain.home.HomeUseCase
 import com.sbn.pinboard.shared.result.Result
 import com.sbn.pinboard.ui.util.LiveDataTestUtil
 import com.sbn.pinboard.ui.util.SyncTaskExecutorRule
+import com.sbn.pinboard.ui.util.getUser
 import com.sbn.test.data.MainCoroutineRule
 import com.sbn.test.data.runBlockingTest
 import junit.framework.Assert.assertEquals
@@ -49,12 +50,10 @@ class HomeViewModelTest {
     @get:Rule
     var syncTaskExecutorRule = SyncTaskExecutorRule()
 
-    private lateinit var viewModel: HomeViewModel
-
 
     @Test
     fun testUserListObject(){
-    val list = listOf(user)
+    val list = listOf(getUser())
     val pagedList = pagedList(list)?.toList()
             Assert.assertThat(
         pagedList[0], Is.`is`(
@@ -64,9 +63,8 @@ class HomeViewModelTest {
 
     @Test
     fun testUserList(){
-    val list = listOf(user)
+    val list = listOf(getUser())
     val pagedList = pagedList(list)?.toList()
-
         assertEquals(list, pagedList)
     }
 
@@ -151,51 +149,12 @@ class MockLimitDataSource(private val itemList: List<User>) :PageKeyedDataSource
 class FakeHomeRepository : HomeRepository {
     override fun homeData(): Flow<Result<List<User>>> {
         return flow {
-            emit(Result.Success(listOf(user)))
+            emit(Result.Success(listOf(getUser())))
         }
     }
 
 }
 
-val links = User.Category.Links(
-    "photos", "self"
-)
 
-val category = User.Category(
-    1,
-    links,
-    2,
-    "title"
-)
-
-val newList = User.Links(
-    "download", "html", "self"
-)
-
-val urls = User.Urls(
-    "full",
-    "raw",
-    "regular",
-    "small",
-    "thumb"
-)
-
-val userLinks = User.User.Links("", "", "", "")
-val profileImages = User.User.ProfileImage("", "", "")
-
-val users = User.User(
-    "id",
-    userLinks,
-    "",
-    profileImages,
-    ""
-)
-
-
-val user = User(
-    listOf(category), "#ffffff", "11-02-2020", 10, "1212132323", false, 12,
-    newList,
-    urls, users, 1
-)
 
 

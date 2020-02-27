@@ -14,26 +14,6 @@ class RecyclingBitmapDrawable(res: Resources?, bitmap: Bitmap?) :
     private var mCacheRefCount = 0
     private var mDisplayRefCount = 0
     private var mHasBeenDisplayed = false
-    /**
-     * Notify the drawable that the displayed state has changed. Internally a
-     * count is kept so that the drawable knows when it is no longer being
-     * displayed.
-     *
-     * @param isDisplayed - Whether the drawable is being displayed or not
-     */
-    fun setIsDisplayed(isDisplayed: Boolean) { //BEGIN_INCLUDE(set_is_displayed)
-        synchronized(this) {
-            if (isDisplayed) {
-                mDisplayRefCount++
-                mHasBeenDisplayed = true
-            } else {
-                mDisplayRefCount--
-            }
-        }
-        // Check to see if recycle() can be called
-        checkState()
-        //END_INCLUDE(set_is_displayed)
-    }
 
     /**
      * Notify the drawable that the cache state has changed. Internally a count
