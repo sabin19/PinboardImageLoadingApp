@@ -82,45 +82,8 @@ class HomeFragment : DaggerFragment() {
                     )
                 )
             })
-
-
-
-
     }
 
 }
 
-
-
-@BindingAdapter(value = ["userList", "imageLoader", "listener"], requireAll = false)
-fun RecyclerView.setAdapter(
-    list: LiveData<PagedList<User>>?,
-    imageLoader: ImageFetcher, listener: OnUserItemClickedListener?
-) {
-    if (this.adapter == null) {
-        this.setHasFixedSize(true)
-        this.layoutManager = GridLayoutManager(this.context, 1)
-        this.addItemDecoration(CommonItemSpaceDecoration(16))
-        this.adapter = HomeAdapter(imageLoader, listener)
-    }
-
-    (this.adapter as HomeAdapter).apply {
-        submitList(list?.value)
-    }
-}
-
-@BindingAdapter("loadingState")
-fun loadingState(
-    recyclerView: RecyclerView,
-    state: Result<Boolean>?
-) {
-    recyclerView.adapter?.let {
-        (it as HomeAdapter).apply {
-            state?.let {
-                setState(it)
-            }
-        }
-    }
-
-}
 
