@@ -60,6 +60,13 @@ class HomeFragment : DaggerFragment() {
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = GridLayoutManager(this.context, 1)
         binding.recyclerView.addItemDecoration(CommonItemSpaceDecoration(16))
+        val adapter = imageFetcher?.let { HomeAdapter(it, viewModel) }
+        binding.recyclerView.adapter = adapter
+        viewModel.list.observe(viewLifecycleOwner, Observer { items ->
+            adapter?.submitList(items)
+        })
+
+
         val connectivity = context?.let { InternetConnectivity(it) }
         connectivity?.skip(1)?.distinctUntilChanged()?.observe(viewLifecycleOwner, Observer {
             if (!it) {
