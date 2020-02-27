@@ -289,14 +289,6 @@ open class ImageCache private constructor(cacheParams: ImageCacheParams) {
             return BitmapCompat.getAllocationByteCount(value.bitmap)
         }
 
-        /**
-         * Locate an existing instance of this Fragment or if not found, create and
-         * add it using FragmentManager.
-         *
-         * @param fm The FragmentManager manager to use.
-         * @return The existing instance of the Fragment or the new instance if just
-         * created.
-         */
         private fun findOrCreateRetainFragment(fm: FragmentManager): RetainFragment { //BEGIN_INCLUDE(find_create_retain_fragment)
 // Check to see if we have retained the worker fragment.
             var mRetainFragment =
